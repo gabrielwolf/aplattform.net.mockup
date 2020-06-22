@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <title>aplattform.net - Listen to free spatial audio music | Ambisonics + Headphones + Headtracking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="styles/main.css" rel="stylesheet">
+</head>
+
+<body>
+<header>
+    <img class="ambisonics-logo" src="images/ambisonics-logo.svg" alt="The Ambisonics logo">
+    <h1 hidden>aplattform.net - Listen to free spatial audio music | Ambisonics + Headphones + Headtracking</h1>
+    <nav>
+        <ul class="margin-0 padding-0 no-disc">
+            <li>
+                <button class="icon active"><i class="fa fa-2x fa-bluetooth-b"></i></button>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main>
+    <aside>
+        <div class="tracking-meta">
+            <h2>Headtracking</h2>
+            <dl>
+                <dt>Connection:</dt>
+                <dd>Established</dd>
+                <dt>Device Name:</dt>
+                <dd>My Tracker</dd>
+                <dt>Battery:</dt>
+                <dd><i class="fa fa-battery-three-quarters" aria-hidden="true"></i>&nbsp;&nbsp;87%</dd>
+            </dl>
+        </div>
+        <div class="tracking-data">
+            <div>
+                <img class="tracking-data__yaw-head" src="images/yaw.png"
+                     alt="Top view of head, that displays actual yaw angle">
+                <div>
+                    <div class="tracking-data__yaw-value">0°</div>
+                    <div>Yaw</div>
+                </div>
+            </div>
+            <div class="tracking-data__pitch">
+                <img class="tracking-data__pitch-head" src="images/pitch.png"
+                     alt="Profile of head, that displays actual pitch angle"><br>
+                <div>
+                    <div class="tracking-data__pitch-value">0°</div>
+                    <div>Pitch</div>
+                </div>
+            </div>
+            <div>
+                <img class="tracking-data__roll-head" src="images/roll.png"
+                     alt="Frontal view of head, that displays actual pitch angle">
+                <div>
+                    <div class="tracking-data__roll-value">0°</div>
+                    <div>Roll</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <section class="player">
+        <div class="label-orientation">
+            <div>Orientation</div>
+        </div>
+        <div class="orientation">
+            <canvas class="orientation__canvas"></canvas>
+        </div>
+        <div class="label-soundfield">
+            <div>Soundfield</div>
+        </div>
+        <div class="soundfield">
+            <video class="responsive" loop muted autoplay poster="images/soundfield.png">
+                <source src="video/analyzer.webm" type="video/webm">
+            </video>
+        </div>
+        <div class="controls">
+            <button class="controls__play icon"><i class="fa fa-2x fa-play"></i></button>
+        </div>
+        <div class="track">
+            <div title="Remaining Time">-3:28</div>
+            <div title="Artist">Walter Brachtel</div>
+            <div title="Title">Suite No. 1 in G major, BWV 1007</div>
+            <div title="Composer">Johann Sebastian Bach</div>
+            <div title="Member">Gabriel Wolf</div>
+            <div title="Upload">
+                <time class="relativeTime" title="2 May 2020" datetime="2020-05-02T05:46:40.000Z">
+                    2 weeks ago
+                </time>
+            </div>
+            <div class="track__license" title="Venue">
+                <a href="https://www.google.de/maps/dir/48.318441,11.5561394//@48.3184513,11.5560402,58m/data=!3m1!1e3"
+                   target="_blank"><i class="fa fa-2x fa-map-marker"></i></a>
+            </div>
+            <div class="track__license" title="License"><a
+                    title="'Walter Brachtel plays Suite No. 1 in G major, BWV 1007' is licensed under a CC BY-ND 4.0 license"
+                    href="https://creativecommons.org/licenses/by-nd/4.0/" target="_blank"><img
+                    src="images/icons/cc-by-sa.svg"
+                    alt="CC-BY-SA 4.0 Icon"></a>
+            </div>
+        </div>
+        <div class="label-waveform">
+            <div>First<br><br>Order<br><br>Ambisonics</div>
+        </div>
+        <div class="waveform"></div>
+    </section>
+</main>
+<footer hidden>
+    A mockup by Gabriel Wolf
+</footer>
+<script src="https://cdn.babylonjs.com/babylon.js"></script>
+<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+<script src="scripts/main.js" type="module"></script>
+
+<script src="https://www.gstatic.com/external_hosted/omnitone/build/omnitone.min.js"></script>
+<script>
+    /**
+     * Sets the decoder's rotation matrix and calculates the angles. Note that
+     * Omnitone decoder uses a different convention (theta = yaw,
+     * psi = pitch, phi = roll).
+     * See: http://mathworld.wolfram.com/EulerAngles.html
+     *
+     * @param  {Number} theta Pitch.
+     * @param  {Number} psi Roll.
+     * @param  {Number} phi Yaw.
+     */
+    let theta = 0;
+
+    let updateDirection = function (theta, psi, phi) {
+        console.log(theta, psi, phi);
+        let cosTheta = Math.cos(theta);
+        let cosPhi = Math.cos(phi);
+        let sinPhi = Math.sin(phi);
+        let sinTheta = Math.sin(theta);
+        let sinPsi = Math.sin(psi);
+        let cosPsi = Math.cos(psi);
+
+        foaRenderer.setRotationMatrix3([
+            cosTheta * cosPhi,
+            cosTheta * sinPhi,
+            -sinTheta,
+            sinPsi * sinTheta * cosPhi - cosPsi * sinPhi,
+            sinPsi * sinTheta * sinPhi + cosPsi * cosPhi,
+            cosTheta * sinPsi,
+            cosPsi * sinTheta * cosPhi + sinPsi * sinPhi,
+            cosPsi * sinTheta * sinPhi - sinPsi * cosPhi,
+            cosTheta * cosPsi
+        ]);
+    }
+
+    let foaRenderer;
+    let isPlaying = false;
+    let audioElementSource, audioContext, audioElement;
+
+    document.getElementsByClassName('controls__play')[0].addEventListener('click', function () {
+        if (!isPlaying) {
+            audioContext = new AudioContext();
+            audioElement = document.createElement('audio');
+            audioElementSource =
+                audioContext.createMediaElementSource(audioElement);
+            audioElement.loop = false;
+            audioElement.crossOrigin = 'anonymous';
+
+            foaRenderer = Omnitone.createFOARenderer(audioContext, {
+                // The example audio is in the FuMa ordering (W,X,Y,Z). So remap the
+                // channels to the ACN format.
+                channelMap: [0, 3, 1, 2]
+            });
+
+            audioElement.src = 'sound/test.wav';
+            audioElement.load();
+            audioElement.play();
+
+            foaRenderer.initialize().then(function () {
+                audioElementSource.connect(foaRenderer.input);
+                foaRenderer.output.connect(audioContext.destination);
+            }, function (onInitializationError) {
+                console.error(onInitializationError);
+            });
+            document.getElementsByClassName('controls__play')[0].classList.add("active");
+            document.getElementsByClassName('controls__play')[0].innerHTML = "<i class='fa fa-2x fa-stop'></i>";
+            isPlaying = true;
+
+            setInterval(function () {
+                updateDirection(theta += 0.1, 0, 0);
+            }, 100)
+        } else if (isPlaying) {
+            audioContext.close();
+            document.getElementsByClassName('controls__play')[0].classList.remove("active");
+            document.getElementsByClassName('controls__play')[0].innerHTML = "<i class='fa fa-2x fa-play'></i>";
+            isPlaying = false;
+        }
+    });
+</script>
+</body>
+</html>
