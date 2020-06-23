@@ -80,7 +80,7 @@
             <button class="controls__play icon"><i class="fa fa-2x fa-play"></i></button>
         </div>
         <div class="track">
-            <div title="Remaining Time">-3:28</div>
+            <div class="track__time" title="Remaining Time">00:00:23</div>
             <div title="Artist">Walter Brachtel</div>
             <div title="Title">Suite No. 1 in G major, BWV 1007</div>
             <div title="Composer">Johann Sebastian Bach</div>
@@ -104,7 +104,9 @@
         <div class="label-waveform">
             <div>First<br><br>Order<br><br>Ambisonics</div>
         </div>
-        <div class="waveform"></div>
+        <div class="waveform">
+            <canvas></canvas>
+        </div>
     </section>
 </main>
 <footer hidden>
@@ -129,7 +131,7 @@
     let theta = 0;
 
     let updateDirection = function (theta, psi, phi) {
-        console.log(theta, psi, phi);
+        // console.log(theta, psi, phi);
         let cosTheta = Math.cos(theta);
         let cosPhi = Math.cos(phi);
         let sinPhi = Math.sin(phi);
@@ -185,6 +187,19 @@
 
             setInterval(function () {
                 updateDirection(theta += 0.1, 0, 0);
+                document.getElementsByClassName('track__time')[0].innerHTML = "-" + new Date(Math.floor(audioElement.duration - audioElement.currentTime) * 1000).toISOString().substr(11, 8);
+
+                var canvas = document.getElementById('myCanvas');
+                var context = canvas.getContext('2d');
+
+                context.beginPath();
+                context.moveTo(100, 10);
+                context.lineTo(450, 50);
+                context.lineWidth = 1;
+
+                // set line color
+                context.strokeStyle = '#ff0000';
+                context.stroke();
             }, 100)
         } else if (isPlaying) {
             audioContext.close();
