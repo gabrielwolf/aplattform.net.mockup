@@ -294,13 +294,9 @@ section.player dt {
 .waveform {
     grid-column: 2 / 7;
     grid-row: 3 / 4;
-    background: hsl(209, 30%, 24%);
-}
-
-.waveform canvas {
     width: 100%;
     height: 100%;
-    background: center center no-repeat url(../images/ambisonics-wxyz.png);
+    background: hsl(209, 30%, 24%);
+    background: url(../images/ambisonics-wxyz.png) repeat-y center center;
     background-size: 100% 100%;
-    background-repeat: repeat-y;
 }

@@ -104,9 +104,8 @@
         <div class="label-waveform">
             <div>First<br><br>Order<br><br>Ambisonics</div>
         </div>
-        <div class="waveform">
-            <canvas></canvas>
-        </div>
+        <canvas class="waveform">
+        </canvas>
     </section>
 </main>
 <footer hidden>
@@ -185,22 +184,26 @@
             document.getElementsByClassName('controls__play')[0].innerHTML = "<i class='fa fa-2x fa-stop'></i>";
             isPlaying = true;
 
+            let waveform = document.getElementsByClassName('waveform')[0];
+
+            waveform.width = waveform.offsetWidth;
+            waveform.height = waveform.offsetHeight;
+
+            let context = waveform.getContext('2d');
+
+            context.lineWidth = 1;
+            context.strokeStyle = 'hsl(209, 30%, 43%)';
+
             setInterval(function () {
                 updateDirection(theta += 0.1, 0, 0);
                 document.getElementsByClassName('track__time')[0].innerHTML = "-" + new Date(Math.floor(audioElement.duration - audioElement.currentTime) * 1000).toISOString().substr(11, 8);
-
-                var canvas = document.getElementById('myCanvas');
-                var context = canvas.getContext('2d');
-
+                context.clearRect(0, 0, waveform.width, waveform.height);
                 context.beginPath();
-                context.moveTo(100, 10);
-                context.lineTo(450, 50);
-                context.lineWidth = 1;
-
-                // set line color
-                context.strokeStyle = '#ff0000';
+                context.moveTo(audioElement.currentTime / audioElement.duration * waveform.width + 0.5, 0);
+                context.lineTo(audioElement.currentTime / audioElement.duration * waveform.width + 0.5, waveform.height);
                 context.stroke();
-            }, 100)
+                context.closePath();
+            }, 20)
         } else if (isPlaying) {
             audioContext.close();
             document.getElementsByClassName('controls__play')[0].classList.remove("active");
