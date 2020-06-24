@@ -297,6 +297,6 @@ section.player dt {
     width: 100%;
     height: 100%;
     background: hsl(209, 30%, 24%);
-    background: url(../images/ambisonics-wxyz.png) repeat-y center center;
+    background: url(../images/waveform.png) repeat-y center center;
     background-size: 100% 100%;
 }
