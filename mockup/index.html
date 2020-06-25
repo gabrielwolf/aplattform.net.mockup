@@ -117,6 +117,30 @@
 
 <script src="https://www.gstatic.com/external_hosted/omnitone/build/omnitone.min.js"></script>
 <script>
+    /* Playhead */
+    let waveform = document.getElementsByClassName('waveform')[0];
+
+    waveform.width = waveform.offsetWidth;
+    waveform.height = waveform.offsetHeight;
+
+    let context = waveform.getContext('2d');
+
+    context.lineWidth = 1;
+    context.strokeStyle = 'hsl(209, 30%, 43%)';
+
+    waveform.addEventListener('pointermove', function (event) {
+        context.clearRect(0, 0, waveform.width, waveform.height);
+        context.beginPath();
+        context.moveTo(event.offsetX + 0.5, 0);
+        context.lineTo(event.offsetX + 0.5, waveform.height);
+        context.stroke();
+        context.closePath();
+    });
+
+    waveform.addEventListener('pointerdown', function (event) {
+        console.log(event.offsetX);
+    });
+
     /**
      * Sets the decoder's rotation matrix and calculates the angles. Note that
      * Omnitone decoder uses a different convention (theta = yaw,
@@ -155,8 +179,9 @@
     let isPlaying = false;
     let audioElementSource, audioContext, audioElement;
 
-    document.getElementsByClassName('controls__play')[0].addEventListener('click', function () {
+    function play() {
         if (!isPlaying) {
+            /* Playback */
             audioContext = new AudioContext();
             audioElement = document.createElement('audio');
             audioElementSource =
@@ -184,18 +209,8 @@
             document.getElementsByClassName('controls__play')[0].innerHTML = "<i class='fa fa-2x fa-stop'></i>";
             isPlaying = true;
 
-            let waveform = document.getElementsByClassName('waveform')[0];
-
-            waveform.width = waveform.offsetWidth;
-            waveform.height = waveform.offsetHeight;
-
-            let context = waveform.getContext('2d');
-
-            context.lineWidth = 1;
-            context.strokeStyle = 'hsl(209, 30%, 43%)';
-
             setInterval(function () {
-                updateDirection(theta += 0.1, 0, 0);
+                updateDirection(theta += 0.01, 0, 0);
                 document.getElementsByClassName('track__time')[0].innerHTML = "-" + new Date(Math.floor(audioElement.duration - audioElement.currentTime) * 1000).toISOString().substr(11, 8);
                 context.clearRect(0, 0, waveform.width, waveform.height);
                 context.beginPath();
@@ -210,6 +225,10 @@
             document.getElementsByClassName('controls__play')[0].innerHTML = "<i class='fa fa-2x fa-play'></i>";
             isPlaying = false;
         }
+    }
+
+    document.getElementsByClassName('controls__play')[0].addEventListener('click', function () {
+        play();
     });
 </script>
 </body>
