@@ -119,121 +119,30 @@
 <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
 <script src="scripts/main.js" type="module"></script>
 
-<script src="https://www.gstatic.com/external_hosted/omnitone/build/omnitone.min.js"></script>
 <script>
-    /* Playhead */
-    let waveform = document.getElementsByClassName('waveform')[0];
+  /* Playhead WIP */
+  let waveform = document.getElementsByClassName('waveform')[0]
 
-    waveform.width = waveform.offsetWidth;
-    waveform.height = waveform.offsetHeight;
+  waveform.width = waveform.offsetWidth
+  waveform.height = waveform.offsetHeight
 
-    let context = waveform.getContext('2d');
+  let context = waveform.getContext('2d')
 
-    context.lineWidth = 1;
-    context.strokeStyle = 'hsl(209, 30%, 43%)';
+  context.lineWidth = 1
+  context.strokeStyle = 'hsl(209, 30%, 43%)'
 
-    waveform.addEventListener('pointermove', function (event) {
-        context.clearRect(0, 0, waveform.width, waveform.height);
-        context.beginPath();
-        context.moveTo(event.offsetX + 0.5, 0);
-        context.lineTo(event.offsetX + 0.5, waveform.height);
-        context.stroke();
-        context.closePath();
-    });
+  waveform.addEventListener('pointermove', function (event) {
+    context.clearRect(0, 0, waveform.width, waveform.height)
+    context.beginPath()
+    context.moveTo(event.offsetX + 0.5, 0)
+    context.lineTo(event.offsetX + 0.5, waveform.height)
+    context.stroke()
+    context.closePath()
+  })
 
-    waveform.addEventListener('pointerdown', function (event) {
-        console.log(event.offsetX);
-    });
-
-    /**
-     * Sets the decoder's rotation matrix and calculates the angles. Note that
-     * Omnitone decoder uses a different convention (theta = yaw,
-     * psi = pitch, phi = roll).
-     * See: http://mathworld.wolfram.com/EulerAngles.html
-     *
-     * @param  {Number} theta Pitch.
-     * @param  {Number} psi Roll.
-     * @param  {Number} phi Yaw.
-     */
-    let theta = 0;
-
-    let updateDirection = function (theta, psi, phi) {
-        // console.log(theta, psi, phi);
-        let cosTheta = Math.cos(theta);
-        let cosPhi = Math.cos(phi);
-        let sinPhi = Math.sin(phi);
-        let sinTheta = Math.sin(theta);
-        let sinPsi = Math.sin(psi);
-        let cosPsi = Math.cos(psi);
-
-        foaRenderer.setRotationMatrix3([
-            cosTheta * cosPhi,
-            cosTheta * sinPhi,
-            -sinTheta,
-            sinPsi * sinTheta * cosPhi - cosPsi * sinPhi,
-            sinPsi * sinTheta * sinPhi + cosPsi * cosPhi,
-            cosTheta * sinPsi,
-            cosPsi * sinTheta * cosPhi + sinPsi * sinPhi,
-            cosPsi * sinTheta * sinPhi - sinPsi * cosPhi,
-            cosTheta * cosPsi
-        ]);
-    }
-
-    let foaRenderer;
-    let isPlaying = false;
-    let audioElementSource, audioContext, audioElement;
-
-    function play() {
-        if (!isPlaying) {
-            /* Playback */
-            audioContext = new AudioContext();
-            audioElement = document.createElement('audio');
-            audioElementSource =
-                audioContext.createMediaElementSource(audioElement);
-            audioElement.loop = false;
-            audioElement.crossOrigin = 'anonymous';
-
-            foaRenderer = Omnitone.createFOARenderer(audioContext, {
-                // The example audio is in the FuMa ordering (W,X,Y,Z). So remap the
-                // channels to the ACN format.
-                channelMap: [0, 3, 1, 2]
-            });
-
-            audioElement.src = 'sound/test.wav';
-            audioElement.load();
-            audioElement.play();
-
-            foaRenderer.initialize().then(function () {
-                audioElementSource.connect(foaRenderer.input);
-                foaRenderer.output.connect(audioContext.destination);
-            }, function (onInitializationError) {
-                console.error(onInitializationError);
-            });
-            document.getElementsByClassName('controls__play')[0].classList.add("active");
-            document.getElementsByClassName('controls__play')[0].innerHTML = "<i class='fa fa-2x fa-stop'></i>";
-            isPlaying = true;
-
-            setInterval(function () {
-                updateDirection(theta += 0.01, 0, 0);
-                document.getElementsByClassName('track__time')[0].innerHTML = "-" + new Date(Math.floor(audioElement.duration - audioElement.currentTime) * 1000).toISOString().substr(11, 8);
-                context.clearRect(0, 0, waveform.width, waveform.height);
-                context.beginPath();
-                context.moveTo(audioElement.currentTime / audioElement.duration * waveform.width + 0.5, 0);
-                context.lineTo(audioElement.currentTime / audioElement.duration * waveform.width + 0.5, waveform.height);
-                context.stroke();
-                context.closePath();
-            }, 20)
-        } else if (isPlaying) {
-            audioContext.close();
-            document.getElementsByClassName('controls__play')[0].classList.remove("active");
-            document.getElementsByClassName('controls__play')[0].innerHTML = "<i class='fa fa-2x fa-play'></i>";
-            isPlaying = false;
-        }
-    }
-
-    document.getElementsByClassName('controls__play')[0].addEventListener('click', function () {
-        play();
-    });
+  waveform.addEventListener('pointerdown', function (event) {
+    console.log(event.offsetX)
+  })
 </script>
 </body>
 </html>
