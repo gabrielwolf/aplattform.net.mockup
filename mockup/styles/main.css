@@ -251,6 +251,7 @@ section.player dt {
 
 .soundfield {
     display: flex;
+    flex-direction: column;
     grid-column: 6 / 7;
     grid-row: 1 / 2;
     background: hsl(209, 30%, 24%);
@@ -296,7 +297,6 @@ section.player dt {
     grid-row: 3 / 4;
     width: 100%;
     height: 100%;
-    background: hsl(209, 30%, 24%);
-    background: url(../images/waveform.png) repeat-y center center;
+    background: url(../images/waveform.png) repeat-y center center hsl(209, 30%, 24%);
     background-size: 100% 100%;
 }
